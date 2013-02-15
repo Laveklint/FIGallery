@@ -1,0 +1,15 @@
+/* Will be compiled down to a single stylesheet with your sass files */
+body, html {
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	background: #111;
+}
+
+div, img {
+	margin: 0;
+	padding: 0;
+	display: block;
+}
