@@ -5,18 +5,31 @@
   <title>Mocha Spec Runner</title>
   <link rel="stylesheet" href="lib/mocha/mocha.css">
   <script src="lib/mocha/mocha.js"></script>
-  <script>mocha.setup('bdd')</script>
+  <script>
+  mocha.setup({
+    ui: 'bdd',
+    globals: ['$', 'jQuery*', 'LiveReload']
+  });
+  </script>
 
   <!-- assertion framework -->
   <script src="lib/chai.js"></script>
   <script>expect = chai.expect</script>
 
   <!-- include source files here... -->
+  <script src="scripts/mockdata.js"></script>
   <script src="scripts/vendor/lodash.min.js"></script>
+  <script src="scripts/plugin/fi-gallery-defaults.js"></script>
+  <script src="scripts/plugin/fi-gallery-utils.js"></script>
+  <script src="scripts/plugin/fi-gallery-loader.js"></script>
+  <script src="scripts/plugin/fi-gallery-item.js"></script>
+  <script src="scripts/plugin/fi-gallery-singleview.js"></script>
   <script src="scripts/plugin/fi-gallery.js"></script>
 
   <!-- include spec files here... -->
   <script src="spec/fi-spec.js"></script>
+  <script src="spec/fi-spec-defaults.js"></script>
+  <script src="spec/fi-spec-utils.js"></script>
 </head>
 <body>
   <div id="mocha"></div>
