@@ -4,11 +4,13 @@
 (function() {
 	'use strict';
 
-	/*
-	* Gallery Config
-	* acts as model for indexes
-	*/
+	// get transition state and browser prefix
 	var browserTransition = figallery.utils.getTransitionState();
+	
+	/**
+	 * Gallery Config
+	 * acts as model for indexes
+	 */
 	var config = {
 
 		transitions: browserTransition === false ? false : true,
@@ -25,6 +27,10 @@
 		imageIndex: 0,
 		events: {},
 
+		/**
+		 * construct a custom event
+		 * returns custom event
+		 */
 		constructEvent: function(name) {
 			if(config.events[name]) return config.events[name];
 			var evt = document.createEvent('Event');
@@ -33,6 +39,12 @@
 			return evt;
 		},
 
+		/**
+		 * increment index
+		 * based on current state it will increment imageindex or pageindex
+		 * dispatches pageevent if pageindex gets updated
+		 * @force 	: boolean to force pageindex update even with single view state
+		 */
 		incrementIndex: function(force) {
 			if(config.displayingSingle && force !== true) return config.incrementSingle();
 			if(config.pageIndex < config.pagesCount-1) {
@@ -44,6 +56,12 @@
 			document.dispatchEvent(e);
 		},
 
+		/**
+		 * decrement index
+		 * based on current state it will decrement imageindex or pageindex
+		 * dispatches pageevent if pageindex gets updated
+		 * @force 	: boolean to force pageindex update even with single view state
+		 */
 		decrementIndex: function(force) {
 			if(config.displayingSingle && force !== true) return config.decrementSingle();
 			if(config.pageIndex > 0) {
@@ -55,10 +73,19 @@
 			document.dispatchEvent(e);
 		},
 
+		/**
+		 * updates image index
+		 * @val 	: the new index value
+		 */
 		setSingleIndex: function(val) {
 			config.imageIndex = val;
 		},
 
+		/**
+		 * increment image index
+		 * infinite pagination
+		 * dispatches singleevent
+		 */
 		incrementSingle: function() {
 			var cut;
 			if(config.imageIndex < config.count-1) {
@@ -75,6 +102,11 @@
 				document.dispatchEvent(e);
 		},
 
+		/**
+		 * decrement image index
+		 * infinite pagination
+		 * dispatches singleevent
+		 */
 		decrementSingle: function() {
 			if(config.imageIndex > 0) {
 				config.setSingleIndex(config.imageIndex-1);
@@ -91,6 +123,9 @@
 				document.dispatchEvent(e);
 		},
 
+		/**
+		 * returns FIItem from pages object based on current imageindex
+		 */
 		getSingleItemAtPosition: function() {
 			var a = Array.prototype.slice.call(figallery.config.pages[figallery.config.pageIndex]),
 				m = _.filter(a, function(item,key) {

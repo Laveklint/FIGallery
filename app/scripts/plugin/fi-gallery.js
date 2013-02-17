@@ -148,6 +148,7 @@
 					}, 100);
 				};
 
+				// listen to pageevent, call change page method
 				document.addEventListener("pageevent", methods.changePage, false);
 
 			},
@@ -345,8 +346,12 @@
 			 * method to set various vals, called on window resize
 			 */
 			reposition: function() {
+
+				// set viewport props
 				figallery.config.viewportWidth = window.innerWidth;
 				figallery.config.viewportHeight = window.innerHeight;
+
+				// call layout method
 				methods.layout();
 
 				// if SingleView is active, set width / height of SingleView inner wrapper
@@ -396,7 +401,6 @@
 				}
 				
 				// for each item in galleryItems
-
 				_.each(galleryItems, function(item, key) {
 					
 					// make sure we got dom-rendered items

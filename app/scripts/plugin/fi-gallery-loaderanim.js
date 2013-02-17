@@ -4,12 +4,12 @@
 (function() {
 	'use strict';
 
-	/*
-	* LoaderAnim function
-	* @boxcount 	: number of boxes
-	* @size 		: size of boxes
-	* @radius 		: the radius of orbit sphere
-	*/
+	/**
+	 * LoaderAnim function
+	 * @boxcount 	: number of boxes
+	 * @size 		: size of boxes
+	 * @radius 		: the radius of orbit sphere
+	 */
 	var LoaderAnim = function(boxCount,size,radius) {
 		var boxCount = boxCount ? boxCount : 8,
 			boxes = [],
@@ -27,9 +27,9 @@
 			stage = figallery.utils.createEl('div', 'loader-anim'),
 			inner = figallery.utils.createEl('div', 'loader-anim-inner', stage);
 
-		/*
-		* init anim
-		*/
+		/**
+		 * init anim
+		 */
 		function init() {
 
 			// figure out center pos for box sphere
@@ -65,21 +65,20 @@
 			animate();
 		}
 
-		/*
-		* requestanimationframe handler
-		* calls rotate
-		* get raf id so it can be canceled later
-		*/
+		/**
+		 * requestanimationframe handler
+		 * calls rotate
+		 * get raf id so it can be canceled later
+		 */
 		function animate() {
 			timer  = requestAnimationFrame( animate );
 			rotate();
 		}
 
-		/*
-		* rotate the boxes in a sphere
-		*/
+		/**
+		 * rotate the boxes in a sphere
+		 */
 		function rotate() {
-			console.log("rotate");
 			for (var i = 0; i < boxCount; i++) {
 				x = radius * Math.cos( angle ) + point;
 				y = radius * Math.sin( angle ) + point;
@@ -104,16 +103,16 @@
 			radius += Math.sin(Math.cos(angle)*2);
 		}
 
-		/*
-		* returns loaderanim stage
-		*/
+		/**
+		 * returns loaderanim stage
+		 */
 		function getElement() {
 			return stage;
 		}
 
-		/*
-		* destroy, clean up
-		*/
+		/**
+		 * destroy, clean up
+		 */
 		function destroy() {
 			animateOut = true;
 			setTimeout(function() {
@@ -128,9 +127,9 @@
 			}, 1000);
 		}
 
-		/*
-		* clean up the pool
-		*/
+		/**
+		 * clean up the pool
+		 */
 		function clearPool() {
 			var i = 0, len = pool.length, boxel;
 			for(i; i<len; i++) {
@@ -144,9 +143,9 @@
 		// init loaderanim
 		init();
 
-		/*
-		* api
-		*/
+		/**
+		 * api
+		 */
 		return {
 			getElement : getElement,
 			init : init,
@@ -154,24 +153,24 @@
 		}
 	};
 
-	/*
-	* box object
-	*/
+	/**
+	 * box object
+	 */
 	var Box = function() {
 		this.el = document.createElement('div');
 		this.el.style.position = 'absolute';
 		this.el.style.setProperty('-'+figallery.config.pref+'-transition', 'opacity 0.5s ease-out');
 	}
 
-	/*
-	* box prototype
-	*/
+	/**
+	 * box prototype
+	 */
 	Box.prototype = {
 
-		/*
-		* sets the size of the box
-		* @s 	: the size
-		*/
+		/**
+		 * sets the size of the box
+		 * @s 	: the size
+		 */
 		setSize: function( s ) {
 			this.el.style.width = s + 'px';
 			this.el.style.height = s + 'px';
@@ -179,11 +178,11 @@
 			this.height = s;
 		},
 
-		/*
-		* position the box
-		* @x 	: the x pos
-		* @y 	: the y pos
-		*/
+		/**
+		 * position the box
+		 * @x 	: the x pos
+		 * @y 	: the y pos
+		 */
 		position: function( x, y ) {
 			var offsetX = arguments[2] ? 0 : this.width >> 1,
 				offsetY = arguments[2] ? 0 : this.height >> 1;
@@ -193,32 +192,32 @@
 			this.el.style.setProperty(figallery.config.prop, 'translate3D(' + (x - offsetX) + 'px, ' + (y - offsetY) + 'px,0)');
 		},
 
-		/*
-		* set the box color
-		* @val 	: rgba val
-		*/
+		/**
+		 * set the box color
+		 * @val 	: rgba val
+		 */
 		setColor: function( val ) {
 			this.el.style.background = val;
 		},
 
-		/*
-		* rotate the box
-		* @val 	: rotation in deg
-		*/
+		/**
+		 * rotate the box
+		 * @val 	: rotation in deg
+		 */
 		rotate: function( val ) {
 			this.el.style.setProperty(figallery.config.prop, 'rotate(' + val + ')');
 		},
 		
-		/*
-		* method called when it's time to leave the party
-		*/
+		/**
+		 * method called when it's time to leave the party
+		 */
 		setOut: function() {
 			this.el.style.opacity = 0;
 		},
 
-		/*
-		* returns the box dom element
-		*/
+		/**
+		 * returns the box dom element
+		 */
 		getElement: function() {
 			return this.el;
 		}

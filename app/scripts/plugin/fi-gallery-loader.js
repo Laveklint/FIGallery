@@ -4,10 +4,10 @@
 (function() {
 	'use strict';
 
-	/*
-	* ImageLoader
-	* @pathArray 	: array of image paths
-	*/
+	/**
+	 * ImageLoader
+	 * @pathArray 	: array of image paths
+	 */
 	var ImageLoader = function(pathArray) {
 		// base vals
 		var i = 0,
@@ -37,6 +37,7 @@
 		}
 
 		// return object with chanined 'done' method
+		// @fn : callback function
 		return {
 			done: function(fn) {
 				postFunction=fn || postFunction;

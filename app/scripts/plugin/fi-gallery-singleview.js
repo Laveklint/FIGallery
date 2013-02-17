@@ -4,11 +4,12 @@
 (function() {
 	'use strict';
 
-	/*
-	*	SingleView function
-	*	@model 	: model instance
-	*/
+	/**
+	 *	SingleView function
+	 *	@model 	: model instance
+	 */
 	var SingleView = function(model) {
+		var self = this;
 		
 		// create dom structor for our single view
 		this.div = document.createElement('div');
@@ -30,29 +31,38 @@
 		this.inner.appendChild(this.frag);
 		this.div.appendChild(this.inner);
 
-		
-
+		// load image : pass in model obj
 		this.loadImage(model);
 
-		var self = this;
+		// listen to singleevent
+		// anon handler triggers loadimage passing in model obj and true to tell view to switch image
 		document.addEventListener("singleevent", function update(event) {
 			self.loadImage(event.model, true);
 		}, false);
 	};
 
-	/*
-	* SingleView prototype
-	*/
+	/**
+	 * SingleView prototype
+	 */
 	SingleView.prototype =  {
 
+		/**
+		 * loadimage into singleview
+		 * @model 	: the model obj
+		 * @shift 	: bool, true tells view to shift image
+		 */
 		loadImage: function(model, shift) {
 			var self = this;
+
 			// display loaderanim
 			var loaderAnim = new figallery.LoaderAnim();
 			if(loaderAnim.getElement() && this.div) this.div.appendChild(loaderAnim.getElement());
 
+			// if shift is true
 			if(shift === true) {
 				if(!self.img) return;
+
+				// fade out current img dom
 				self.img.style.setProperty('-'+figallery.config.pref+'-transition', 'all 0.3s');
 				self.img.style.setProperty('opacity', 0);
 
@@ -61,6 +71,7 @@
 				var repimg = new Image();
 				repimg.src = model.large;
 
+				// load new image
 				figallery.ImageLoader([model.large]).done(function(imgs) {
 					
 					// copy the style of self.img to our new image node
@@ -80,14 +91,17 @@
 					// destroy loaderanim
 					loaderAnim.destroy();
 				});
-			} else {
+			} else { // if shift is false
+
+				// set img src to models large image
 				this.img.src = model.large;
+
+				// load image
 				figallery.ImageLoader([model.large]).done(function(imgs) {
 					setTimeout(function(){
-						if(self.img) {
-							self.img.style.setProperty('-'+figallery.config.pref+'-transition', 'all 0.5s cubic-bezier(0.175, 0.885, 0.335, 1.165)');
-							self.img.style.setProperty(figallery.config.prop, 'translateY(0%)');
-						}
+						if(!self.img) return;
+						self.img.style.setProperty('-'+figallery.config.pref+'-transition', 'all 0.5s cubic-bezier(0.175, 0.885, 0.335, 1.165)');
+						self.img.style.setProperty(figallery.config.prop, 'translateY(0%)');
 					}, 100);
 
 					// destroy loaderanim
@@ -96,16 +110,20 @@
 			}
 		},
 
-		/*
-		* method called from gallery
-		* sets up close click handler
-		* @fn 	: callback
-		*/
+		/**
+		 * method called from gallery
+		 * sets up close click handler
+		 * @fn 	: callback
+		 */
 		onClose: function(fn) {
 			var self = this;
-			// add click listener
+			// add click listener, named handler to be able to remove listner in strict mode
 			this.div.addEventListener('click', function cleanOut() {
+				
+				// remove listener
 				self.div.removeEventListener('click', cleanOut, false);
+
+				// set style of dom
 				self.div.style.opacity = 0;
 				self.img.style.setProperty('-'+figallery.config.pref+'-transition', 'all 0.4s ease-in');
 				self.img.style.setProperty(figallery.config.prop, 'translateY(-200%)');
@@ -113,7 +131,7 @@
 				// call callback
 				fn();
 
-				// set a little timeout to allow some out-animation
+				// set a little timeout to allow some out-animation and clean up
 				setTimeout(function() {
 					self.inner.removeChild(self.img);
 					self.div.removeChild(self.inner);
@@ -124,9 +142,9 @@
 			});
 		},
 
-		/*
-		* returns SingleView base dom element
-		*/
+		/**
+		 * returns SingleView base dom element
+		 */
 		getElement: function() {
 			return this.div;
 		}
