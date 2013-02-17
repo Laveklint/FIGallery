@@ -32,7 +32,7 @@
 			this.img = this.el.getElementsByTagName('img')[0];
 
 			// set styles of image dom
-			this.img.style.cssText = 'box-sizing:border-box;-moz-box-sizing:border-box;cursor:pointer;max-width:100%;height:auto;position:relative;';
+			this.img.style.cssText = 'display:block;box-sizing:border-box;-moz-box-sizing:border-box;cursor:pointer;max-width:100%;height:auto;position:relative;';
 			
 			// set up listeners
 			this.listen();

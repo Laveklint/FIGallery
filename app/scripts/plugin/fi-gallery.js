@@ -73,12 +73,51 @@
 				// check if we got jsondata and an existing element in the dom  ::  return false and die silently
 				if( !options.jsonData && el === null ) return false;
 
-				// is the jsondata stringify'able  ::  return false and die silently
-				if( JSON.stringify(options.jsonData) ) {
-					methods.build(options.jsonData);
+				// filetype regex
+				var pattern = /\.[0-9a-z]{1,5}$/i,
+					jd = options.jsonData;
+
+				// is options.jsondata a string and is the the string ending with
+				// '.json' then let's try to load it
+				if( typeof jd == "string" && jd.match(pattern) == '.json' ) {
+					
+					// call loadJSON to load the data
+					methods.loadJSON(jd);
+
+				} 	
+				// looks like an object was passed in, does it have an images property
+				else if( JSON.stringify(jd) && jd.hasOwnProperty("images") ) {
+
+					// let's build it up
+					methods.build(jd);
+
+				} else { return false; }
+			},
+
+			/**
+			 * load json file
+			 * @url 	: the file to load
+			 */
+			loadJSON: function(url) {
+				var xmlhttp;
+				
+				// are we dealing with and xmlhttprequest or ms activexobject
+				if(window.XMLHttpRequest) {
+					xmlhttp = new XMLHttpRequest();
 				} else {
-					return false;
+					xmlhttp = new ActiveXObject('Microsoft.XMLHTTP');
 				}
+
+				// file loaded : let's build it up
+				xmlhttp.onload = function() {
+					methods.build(JSON.parse(this.responseText));
+				};
+
+				// open a get request to our file
+				xmlhttp.open('GET', url, false);
+
+				// send the request
+				xmlhttp.send()
 			},
 
 			/**

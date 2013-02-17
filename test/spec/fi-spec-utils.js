@@ -10,7 +10,7 @@ describe("FI Gallery Utils", function() {
 		it("should check browser transition state", function() {
 			var fi = figallery.utils;
 			var trans = fi.getTransitionState();
-			expect(trans).to.be.equal(true);
+			expect(trans).to.be.an("array");
 		});
 
 		it("should return bool prefix -webkit-transform", function() {
