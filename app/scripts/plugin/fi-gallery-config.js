@@ -37,18 +37,22 @@
 			if(config.displayingSingle && force !== true) return config.incrementSingle();
 			if(config.pageIndex < config.pagesCount-1) {
 				config.pageIndex++;
-				var e = config.constructEvent('pageevent');
-				document.dispatchEvent(e);
+			} else {
+				config.pageIndex = 0;
 			}
+			var e = config.constructEvent('pageevent');
+			document.dispatchEvent(e);
 		},
 
 		decrementIndex: function(force) {
 			if(config.displayingSingle && force !== true) return config.decrementSingle();
 			if(config.pageIndex > 0) {
 				config.pageIndex--;
-				var e = config.constructEvent('pageevent');
-				document.dispatchEvent(e);
+			} else {
+				config.pageIndex = config.pagesCount-1;
 			}
+			var e = config.constructEvent('pageevent');
+			document.dispatchEvent(e);
 		},
 
 		setSingleIndex: function(val) {
@@ -56,31 +60,35 @@
 		},
 
 		incrementSingle: function() {
+			var cut;
 			if(config.imageIndex < config.count-1) {
 				config.setSingleIndex(config.imageIndex+1);
 
-				var cut = config.pages[config.pageIndex].length * (config.pageIndex+1);
+				cut = config.pages[config.pageIndex].length * (config.pageIndex+1);
 				if(config.imageIndex === cut) config.incrementIndex(true);
-
+			} else {
+				config.setSingleIndex(0);
+				config.incrementIndex(true);
+			}
 				var e = config.constructEvent('singleevent');
 				e.model = config.getSingleItemAtPosition().model;
 				document.dispatchEvent(e);
-			}
 		},
 
 		decrementSingle: function() {
 			if(config.imageIndex > 0) {
 				config.setSingleIndex(config.imageIndex-1);
 
-				if(config.pageIndex !== 0) {
-					var cut = config.pages[config.pageIndex-1].length * config.pageIndex;
-					if(config.imageIndex < cut) config.decrementIndex(true);
-				}
-
+				var pi = config.pageIndex === 0 ? config.pages.length-1 : config.pageIndex-1
+				var cut = config.pages[pi].length * config.pageIndex;
+				if(config.imageIndex < cut) config.decrementIndex(true);
+			} else {
+				config.setSingleIndex(config.count-1);
+				config.decrementIndex(true);
+			}
 				var e = config.constructEvent('singleevent');
 				e.model = config.getSingleItemAtPosition().model;
 				document.dispatchEvent(e);
-			}
 		},
 
 		getSingleItemAtPosition: function() {

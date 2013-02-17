@@ -1,38 +1,38 @@
- /*
- * FI Gallery
- *
- * Copyright 2013 Pierre Laveklint
- *
- * Dependency: lodash https://github.com/bestiejs/lodash
- *
- * Expect a json-object. The JSON should be defined as follow:
- *
- * 	{ 
- *		'options' : [
- *		  {
- *			'namespace': 'fi',
- *			'itemwidth': 0,
- *			'spacing': 10,
- *			'perpage': 0,
- *			'maxcols': 0,
- *			'transitionInTime': 70
- *		  }
- *		] 
- *  	'images' : [ 
- *  	  { 
- *    		'thumb' : 'http://lorempixum.com/150/150',
- *    		'large' : 'http://lorempixum.com/400/600'
- *		  }
- *  	]
- * 	}
- *
- * Can give extra styling with css with the following classnames: 
- * (namespace is passed in from json, defaults to 'fi')
- *		
- *		namespace-gallery 			// outer dom if no dom was passed in as container
- *		namespace-gallery-wrapper 	// wrapper within container
- * 		namespace-gallery-single 	// single view wrapper dom
- */
+ /**
+  * FI Gallery
+  *
+  * Copyright 2013 Pierre Laveklint
+  *
+  * Dependency: lodash https://github.com/bestiejs/lodash
+  *
+  * Expect a json-object. The JSON should be defined as follow:
+  *
+  * 	{ 
+  *		'options' : [
+  *		  {
+  *			'namespace': 'fi',
+  *			'itemwidth': 0,
+  *			'spacing': 10,
+  *			'perpage': 0,
+  *			'maxcols': 0,
+  *			'transitionInTime': 70
+  *		  }
+  *		] 
+  *  	'images' : [ 
+  *  	  { 
+  *    		'thumb' : 'http://lorempixum.com/150/150',
+  *    		'large' : 'http://lorempixum.com/400/600'
+  *		  }
+  *  	]
+  * 	}
+  *
+  * Can give extra styling with css with the following classnames: 
+  * (namespace is passed in from json, defaults to 'fi')
+  *		
+  *		namespace-gallery 			// outer dom if no dom was passed in as container
+  *		namespace-gallery-wrapper 	// wrapper within container
+  * 		namespace-gallery-single 	// single view wrapper dom
+  */
 
 // app namespace
 ;this.figallery = this.figallery || {};
@@ -41,9 +41,9 @@
 
 	figallery.options = {};
 
-	/*
-	* Gallery Function :: constructor
-	*/
+	/**
+	 * Gallery Function :: constructor
+	 */
 	var	Gallery = function(settings,container) {
 		'use strict';
 
@@ -57,16 +57,17 @@
 			galleryItems = [],
 			itemWidth = 0,
 			resizeTimeout = 0,
+			toppanel,
 			loaderAnim;
 
-		/*
-		* Methods Object :: private
-		*/
+		/**
+		 * Methods Object :: private
+		 */
 		methods = {
 
-			/*
-			* init the gallery
-			*/
+			/**
+			 * init the gallery
+			 */
 			init: function() {
 
 				// check if we got jsondata and an existing element in the dom  ::  return false and die silently
@@ -80,9 +81,9 @@
 				}
 			},
 
-			/*
-			* if we have valid json, grab data and start things up
-			*/
+			/**
+			 * if we have valid json, grab data and start things up
+			 */
 			build: function(itemsData) {
 				var itemsArray = itemsData.images,
 					jsonOptions = itemsData.options ? itemsData.options[0] : null;
@@ -101,9 +102,9 @@
 				methods.setup(itemsArray);
 			},
 
-			/*
-			* set things up, create dom's
-			*/
+			/**
+			 * set things up, create dom's
+			 */
 			setup: function(itemsArray) {
 				var i, model;
 
@@ -111,18 +112,12 @@
 				if( el === null ) el = figallery.utils.createEl('div', options.namespace+'-gallery', document.body);
 				el.style.overflowX = 'hidden';
 
-				if( options.showpanel === true ) {
-					var panel = new figallery.TopPanel();
-					el.appendChild(panel.getElement());
-				}
-
 				// set max-width of gallery-container if passed in from json
 				if(options.gallerywidth !== null) el.style.cssText = 'max-width:'+options.gallerywidth+';overflow-x:hidden;';
 
 				// create a wrapper
 				container = figallery.utils.createEl('div', options.namespace+'-gallery-wrapper', el);
-				container.style.position = 'relative';
-				container.style.display = 'block';
+				container.style.cssText = 'position:relative;display:block;overflow:hidden';
 
 				// for each item on our data, create model and pass in settings from our json
 				// create item instance passing in the model
@@ -137,7 +132,13 @@
 				// call initial reposition
 				methods.reposition();
 
+				// display initial page (all images if we only got 1 page)
 				methods.displayPage();
+
+				// create new instance of toppanel navigation
+				toppanel = new figallery.TopPanel();
+				el.appendChild(toppanel.getElement());
+				toppanel.toggle(figallery.config.pages.length > 1);
 				
 				// listen to window resize : reposition each time window get resized
 				window.onresize=function(){
@@ -151,12 +152,12 @@
 
 			},
 
-			/*
-			* method for creating a model object instance
-			* @id 		:model id
-			* @thumb 	:path to thumb
-			* @large	:path to large
-			*/
+			/**
+			 * method for creating a model object instance
+			 * @id 		:model id
+			 * @thumb 	:path to thumb
+			 * @large	:path to large
+			 */
 			createItemModel: function(id, thumb, large) {
 				var model = {
 					id: id,
@@ -173,12 +174,12 @@
 				return model;
 			},
 
-			/*
-			* method for creating new instance of FIItem
-			* sets callback to item selected
-			* pushes item into items array
-			* @model 	:model to assign to the FIItem
-			*/
+			/**
+			 * method for creating new instance of FIItem
+			 * sets callback to item selected
+			 * pushes item into items array
+			 * @model 	:model to assign to the FIItem
+			 */
 			createItem: function(model) {
 				var self = this;
 
@@ -187,7 +188,6 @@
 
 				// set callback to click
 				item.onSelected( function(model) {
-					console.log("onSelected");
 					figallery.config.setSingleIndex(model.id);
 					self.displaySingle(model);
 				});
@@ -196,11 +196,11 @@
 				items.push(item);
 			},
 
-			/*
-			* method for building up pages object
-			* creates an object containing arrays of FIItems instances
-			* each slot holds the instances that fits into each page
-			*/
+			/**
+			 * method for building up pages object
+			 * creates an object containing arrays of FIItems instances
+			 * each slot holds the instances that fits into each page
+			 */
 			createPages: function(){
 				var i = 0,
 					j = 0,
@@ -227,29 +227,53 @@
 					}
 					figallery.config.pages[i].length = j;
 				}
+				figallery.config.pages.length = i;
 			},
 
-			/*
-			* map all FIItem instances and pluck the image url
-			*/
+			/**
+			 * map all FIItem instances
+			 * add each item to container
+			 * return array of current items
+			 */
 			getElements: function() {
 				var a = Array.prototype.slice.call(figallery.config.pages[figallery.config.pageIndex]);
-				var imgs = _.map(a, function(item,key) { container.appendChild(item.getElement()); return item.getImageElement().src; });
+				var imgs = _.map(a, function(item,key) { container.appendChild(item.getElement()); return item; });
 				return imgs;
 			},
 
+			/**
+			 * map all current FIItem instances and pluck the image url
+			 */
+			getElementImageSource: function() {
+				var paths = _.map(galleryItems, function(item,key) { return item.getImageElement().src; });
+				return paths;
+			},
+
+			/**
+			 * change page
+			 * hide current content
+			 * display new page content
+			 */
 			changePage: function() {
 				methods.hide();
 				setTimeout(function() {
-
-				container.innerHTML = '';
-				methods.displayPage();
+					container.innerHTML = '';
+					methods.displayPage();
 				}, 500);
 			},
 
+			/**
+			 * display page
+			 * get span of page images
+			 * load through imageloader
+			 * display new set of images
+			 */
 			displayPage: function() {
+				// methods.reposition();
+				figallery.config.isAnimating = false;
 				// create an array of each 'div' in our container
 				galleryItems = methods.getElements();
+				var imagePaths = methods.getElementImageSource();
 
 				// display loaderanim
 				loaderAnim = new figallery.LoaderAnim(4,35);
@@ -257,7 +281,7 @@
 				
 				// preload all images, once loaded lay it all out and show our items
 				// set isAnimating to true
-				figallery.ImageLoader(galleryItems).done(function(imgs) {
+				figallery.ImageLoader(imagePaths).done(function(imgs) {
 					
 					// reposition
 					methods.reposition();
@@ -279,12 +303,12 @@
 				});
 			},
 
-			/*
-			* callback function after an FIItem was clicked
-			* creates a new instance of SingleView
-			* displays a single image
-			* @model 	: model instance to set to SingleView
-			*/
+			/**
+			 * callback function after an FIItem was clicked
+			 * creates a new instance of SingleView
+			 * displays a single image
+			 * @model 	: model instance to set to SingleView
+			 */
 			displaySingle: function(model) {
 				
 				// we are now displaying single view
@@ -293,14 +317,19 @@
 				// create a new SingleView instance
 				var singleView = new figallery.SingleView(model);
 
+				toppanel.toggle(figallery.config.displayingSingle);
+
 				// set callback to closing of SingleView
 				singleView.onClose(function() {
 					figallery.config.displayingSingle = false;
+					toppanel.toggle( (figallery.config.displayingSingle || figallery.config.pages.length > 1 ) );
 					container.style.setProperty(figallery.config.prop, 'scale(1,1)');
 
 					setTimeout(function(){
-						el.removeChild(singleView.getElement());
-						singleView = null;
+						if(singleView && singleView.getElement()) {
+							el.removeChild(singleView.getElement());
+							singleView = null;
+						}
 					}, 300);
 				});
 
@@ -312,9 +341,9 @@
 				container.style.setProperty(figallery.config.prop, 'scale(0.9,0.9) translateY(-4%)');
 			},
 
-			/*
-			* method to set various vals, called on window resize
-			*/
+			/**
+			 * method to set various vals, called on window resize
+			 */
 			reposition: function() {
 				figallery.config.viewportWidth = window.innerWidth;
 				figallery.config.viewportHeight = window.innerHeight;
@@ -322,21 +351,23 @@
 
 				// if SingleView is active, set width / height of SingleView inner wrapper
 				if( figallery.config.displayingSingle ) {
-					var inner = document.getElementsByClassName(options.namespace+'-gallery-single')[0];
-					inner.style.width = figallery.config.viewportWidth+'px';
-					inner.style.height = figallery.config.viewportHeight+'px';
+					var single = document.getElementsByClassName(options.namespace+'-gallery-single')[0],
+						inner = single.childNodes[0];
+					single.style.width = inner.style.width = figallery.config.viewportWidth+'px';
+					single.style.height = inner.style.height = figallery.config.viewportHeight+'px';
 				}
 			},
 
-			/*
-			* method for laying out all the pieces
-			*/
+			/**
+			 * method for laying out all the pieces
+			 */
 			layout: function() {
 
 				// local vars
-				var numberOfColumns, fakeWidth, columnHeights, column, tallest, actualColumns, i, tmpCols;
+				var numberOfColumns, fakeWidth, columnHeights, column, tallest, actualColumns, i, tmpCols, perpage;
 
 				// reset vals
+				perpage = figallery.options.perpage;
 				tallest = 0;
 				actualColumns = 0;
 
@@ -348,7 +379,7 @@
 
 				// ensure we got 1 column, or set to maxcols 
 				//otherwise create an extra column so we can keep a full width layout without scaling up the images
-				numberOfColumns = (numberOfColumns === 0) ? 1 : options.maxcols > 0 ? options.maxcols : numberOfColumns +1;
+				numberOfColumns = (numberOfColumns === 0) ? 1 : options.maxcols > 0 ? options.maxcols : perpage <= numberOfColumns ? perpage : numberOfColumns +1;
 
 				// set a fakewidth if we're setting a full width layout
 				fakeWidth = tmpCols === numberOfColumns -1 ? (el.offsetWidth / (numberOfColumns)) - (options.spacing) : itemWidth;
@@ -365,7 +396,8 @@
 				}
 				
 				// for each item in galleryItems
-				_.each(items, function(item, key) {
+
+				_.each(galleryItems, function(item, key) {
 					
 					// make sure we got dom-rendered items
 					item.ensureRendered();
@@ -393,10 +425,8 @@
 					}
 				});
 
-				if (true) {
-					numberOfColumns = (actualColumns < numberOfColumns) ? actualColumns : numberOfColumns;
-				}
-
+				numberOfColumns = (actualColumns < numberOfColumns) ? actualColumns : numberOfColumns;
+				
 				// set height/width of the container, center it
 				container.style.height = tallest+'px';
 				container.style.width = (((numberOfColumns) * (fakeWidth + options.spacing)) - options.spacing) +'px';
@@ -404,20 +434,34 @@
 				
 			},
 
+			/**
+			 * show method
+			 * show container
+			 * iterate items and call show method on each item
+			 */
 			show: function() {	// call show method on each FIItem
+
+				// set container visibility to visible
 				container.style.visibility = 'visible';
+
 				// loop our FIItem's and call show method on each item
 				// passes in queue delay
 				var i = 0,
 					delay = options.transitionInTime;
-				for(var i = 0; i < items.length; i++) {
-					items[i].show(i*delay);
+				for(var i = 0; i < galleryItems.length; i++) {
+					galleryItems[i].show(i*delay);
 				}
 			},
 
-			hide: function() {	// call show method on each FIItem
+			/**
+			 * hide method
+			 * hide container
+			 * iterate items and call hide method on each item
+			 */
+			hide: function() {	// call hide method on each FIItem
+				container.style.height = '0px';
 				container.style.visibility = 'hidden';
-				// loop our FIItem's and call show method on each item
+				// loop our FIItem's and call hide method on each item
 				// passes in queue delay
 				var i = 0,
 					delay = options.transitionInTime;

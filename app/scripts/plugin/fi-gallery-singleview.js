@@ -49,16 +49,33 @@
 			var self = this;
 			// display loaderanim
 			var loaderAnim = new figallery.LoaderAnim();
-			this.div.appendChild(loaderAnim.getElement());
+			if(loaderAnim.getElement() && this.div) this.div.appendChild(loaderAnim.getElement());
 
 			if(shift === true) {
+				if(!self.img) return;
 				self.img.style.setProperty('-'+figallery.config.pref+'-transition', 'all 0.3s');
 				self.img.style.setProperty('opacity', 0);
+
+				// create new image node
+				// performance faster than swapping img.src of self.img
+				var repimg = new Image();
+				repimg.src = model.large;
+
 				figallery.ImageLoader([model.large]).done(function(imgs) {
-					self.img.src = model.large;
+					
+					// copy the style of self.img to our new image node
+					repimg.style.cssText = self.img.style.cssText;
+					// insert our new image node before self.img
+					self.inner.insertBefore(repimg, self.img);
+					// now we can remove self.img
+					self.inner.removeChild(self.img);
+					// and set self.img to our new image node
+					self.img = repimg;
+
+					// let it all fade out than fade in
 					setTimeout(function(){
 						self.img.style.setProperty('opacity', 1);
-					}, 500);
+					}, 550);
 
 					// destroy loaderanim
 					loaderAnim.destroy();
@@ -67,8 +84,10 @@
 				this.img.src = model.large;
 				figallery.ImageLoader([model.large]).done(function(imgs) {
 					setTimeout(function(){
-						self.img.style.setProperty('-'+figallery.config.pref+'-transition', 'all 0.5s cubic-bezier(0.175, 0.885, 0.335, 1.165)');
-						self.img.style.setProperty(figallery.config.prop, 'translateY(0%)');
+						if(self.img) {
+							self.img.style.setProperty('-'+figallery.config.pref+'-transition', 'all 0.5s cubic-bezier(0.175, 0.885, 0.335, 1.165)');
+							self.img.style.setProperty(figallery.config.prop, 'translateY(0%)');
+						}
 					}, 100);
 
 					// destroy loaderanim
@@ -86,6 +105,7 @@
 			var self = this;
 			// add click listener
 			this.div.addEventListener('click', function cleanOut() {
+				self.div.removeEventListener('click', cleanOut, false);
 				self.div.style.opacity = 0;
 				self.img.style.setProperty('-'+figallery.config.pref+'-transition', 'all 0.4s ease-in');
 				self.img.style.setProperty(figallery.config.prop, 'translateY(-200%)');
@@ -95,9 +115,8 @@
 
 				// set a little timeout to allow some out-animation
 				setTimeout(function() {
-					self.div.removeEventListener('click', cleanOut, false);
-					self.inner.removeChild(img);
-					self.div.removeChild(inner);
+					self.inner.removeChild(self.img);
+					self.div.removeChild(self.inner);
 					self.img = null;
 					self.inner = null;
 					self.div = null;

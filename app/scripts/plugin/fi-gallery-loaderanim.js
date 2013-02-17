@@ -35,8 +35,8 @@
 			// figure out center pos for box sphere
 			var perc = figallery.config.viewportHeight - point;
 			perc = ((perc >> 1) - point) >> 1;
-			stage.style.cssText = 'position:fixed;top:0;left:0;height:100%;width:100%;z-index:100;';
-			inner.style.cssText = '-'+figallery.config.pref+'-transform:translateY('+perc+'px);position:relative;height:100%;';
+			stage.style.cssText = 'position:fixed;top:0;left:0;height:'+figallery.config.viewportHeight+'px;width:100%;z-index:100;';
+			inner.style.cssText = '-'+figallery.config.pref+'-transform:translateY('+perc+'px);position:relative;height:'+figallery.config.viewportHeight+'px';
 			
 			// create as many box instances as boxCount
 			for(var i=0; i<boxCount; i++) {
@@ -79,6 +79,7 @@
 		* rotate the boxes in a sphere
 		*/
 		function rotate() {
+			console.log("rotate");
 			for (var i = 0; i < boxCount; i++) {
 				x = radius * Math.cos( angle ) + point;
 				y = radius * Math.sin( angle ) + point;
