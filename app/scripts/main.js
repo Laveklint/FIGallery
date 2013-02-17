@@ -5,7 +5,7 @@ var j = {
       "namespace": 'fi',
       "max": 0,
       "spacing": 10,
-      "perpage": 15,
+      "perpage": 18,
       "maxcols": 0,
       "transitionInTime": 70,
       "itemwidth": 0,

@@ -65,7 +65,7 @@
 			// listener with anon handler for mouseover
 			self.el.addEventListener('mouseover', function() {
 				self.img.style.setProperty('-'+figallery.config.pref+'-transition', 'all 0.3s ease-in');
-				self.img.style.setProperty('border', '8px solid white');
+				self.img.style.setProperty('border', figallery.options.hoverframewidth +' solid ' + figallery.options.hoverframecolor);
 			});
 
 			// listener with anon handler for mouseout

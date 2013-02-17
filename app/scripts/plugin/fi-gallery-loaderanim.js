@@ -120,7 +120,6 @@
 				timer = null;
 
 				clearPool();
-
 				stage.removeChild(inner);
 				stage.parentNode.removeChild(stage);
 				pool = [];

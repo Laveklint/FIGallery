@@ -29,6 +29,12 @@
 		// set to 0 to skip fade in
 		transitionInTime: 70,
 
+		// hover frame color
+		hoverframecolor: 'rgba(255,255,255, 1)',
+
+		// hover frame width
+		hoverframewidth: '8px',
+
 		// set a width of the gallery container
 		gallerywidth: null
 

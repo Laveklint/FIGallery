@@ -39,7 +39,7 @@
 			this.nextEl.href = 'javascript:;';
 
 			// set style of nav
-			var style = 'box-sizing:border-box;-moz-box-sizing:border-box;display:block;text-decoration:none;padding:25px;font-size:36px;color:rgb(225,225,225);background:rgba(0,0,0,0.65);position:absolute;top:0;'+figallery.config.prop+':translateY(-100%);',
+			var style = 'box-sizing:border-box;-moz-box-sizing:border-box;display:block;text-decoration:none;padding:25px;font-size:36px;color:rgb(200,200,200);background:rgba(0,0,0,0.65);position:absolute;top:0;'+figallery.config.prop+':translateY(-100%);',
 				stylePrev = style+'left:0',
 				styleNext = style+'right:0';
 
@@ -83,13 +83,13 @@
 
 			// mouseout handler, anon callback set style
 			this.prevEl.addEventListener('mouseout', function(event) {
-				event.currentTarget.style.color = 'rgb(225,225,225)';
+				event.currentTarget.style.color = 'rgb(200,200,200)';
 				event.currentTarget.style.background = 'rgba(0,0,0,0.64)';
 			});
 
 			// mouseout handler, anon callback set style
 			this.nextEl.addEventListener('mouseout', function(event) {
-				event.currentTarget.style.color = 'rgb(225,225,225)';
+				event.currentTarget.style.color = 'rgb(200,200,200)';
 				event.currentTarget.style.background = 'rgba(0,0,0,0.64)';
 			});
 		},
@@ -114,8 +114,9 @@
 		 * @el 	: the element to slide down
 		 */
 		slideDown: function(el) {
+			var position = figallery.config.displayingSingle ? ((figallery.config.viewportHeight >> 1)-95)+'px' : '0%'
 			el.style.setProperty('-'+figallery.config.pref+'-transition', 'all 0.5s ease-in-out');
-			el.style.setProperty(figallery.config.prop, 'translateY(0%)');
+			el.style.setProperty(figallery.config.prop, 'translateY('+position+')');
 		},
 
 		/**

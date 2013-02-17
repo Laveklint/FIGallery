@@ -322,15 +322,26 @@
 
 				// set callback to closing of SingleView
 				singleView.onClose(function() {
+
+					// we're closing single so set it to false
 					figallery.config.displayingSingle = false;
-					toppanel.toggle( (figallery.config.displayingSingle || figallery.config.pages.length > 1 ) );
+
+					// pop back our container to scale 1
 					container.style.setProperty(figallery.config.prop, 'scale(1,1)');
 
+					// let other things fly first then remove single view
 					setTimeout(function(){
+
+						// toggle toppanel : for performance we move it into this
+						// settimout func since it staggered in conjunction with container scale
+						toppanel.toggle( (figallery.config.displayingSingle || figallery.config.pages.length > 1 ) );
+
+						// remove our single view 
 						if(singleView && singleView.getElement()) {
 							el.removeChild(singleView.getElement());
 							singleView = null;
 						}
+
 					}, 300);
 				});
 
@@ -384,7 +395,7 @@
 
 				// ensure we got 1 column, or set to maxcols 
 				//otherwise create an extra column so we can keep a full width layout without scaling up the images
-				numberOfColumns = (numberOfColumns === 0) ? 1 : options.maxcols > 0 ? options.maxcols : perpage <= numberOfColumns ? perpage : numberOfColumns +1;
+				numberOfColumns = (numberOfColumns === 0) ? 1 : options.maxcols > 0 ? options.maxcols : perpage <= numberOfColumns && perpage > 0 ? perpage : numberOfColumns +1;
 
 				// set a fakewidth if we're setting a full width layout
 				fakeWidth = tmpCols === numberOfColumns -1 ? (el.offsetWidth / (numberOfColumns)) - (options.spacing) : itemWidth;
