@@ -11,35 +11,40 @@
 	 * @radius 		: the radius of orbit sphere
 	 */
 	var LoaderAnim = function(boxCount,size,radius) {
-		var boxCount = boxCount ? boxCount : 8,
-			boxes = [],
-			size = size ? size : 10,
-			spacing = 5,
-			step = Math.PI * 2 / boxCount,
-			angle = 0,
-			x = 0,
-			y = 0,
-			animateOut = false,
-			radius = radius ? radius : 20,
-			point = figallery.config.viewportWidth >> 1,
-			pool = [],
-			timer = 0,
-			stage = figallery.utils.createEl('div', 'loader-anim'),
-			inner = figallery.utils.createEl('div', 'loader-anim-inner', stage);
 
+	 	this.boxCount = boxCount ? boxCount : 8;
+		this.boxes = [];
+		this.size = size ? size : 10;
+		this.spacing = 5;
+		this.step = Math.PI * 2 / this.boxCount;
+		this.angle = 0;
+		this.x = 0;
+		this.y = 0;
+		this.animateOut = false;
+		this.radius = radius ? radius : 20;
+		this.point = figallery.config.viewportWidth >> 1;
+		this.pool = [];
+		this.timer = 0;
+		this.stage = figallery.utils.createEl('div', 'loader-anim');
+		this.inner = figallery.utils.createEl('div', 'loader-anim-inner', this.stage);
+
+		this.init();
+	};
+
+	LoaderAnim.prototype = {
 		/**
 		 * init anim
 		 */
-		function init() {
+		init: function() {
 
 			// figure out center pos for box sphere
-			var perc = figallery.config.viewportHeight - point;
-			perc = ((perc >> 1) - point) >> 1;
-			stage.style.cssText = 'position:fixed;top:0;left:0;height:'+figallery.config.viewportHeight+'px;width:100%;z-index:100;';
-			inner.style.cssText = '-'+figallery.config.pref+'-transform:translateY('+perc+'px);position:relative;height:'+figallery.config.viewportHeight+'px';
+			var perc = figallery.config.viewportHeight - this.point;
+			perc = ((perc >> 1) - this.point) >> 1;
+			this.stage.style.cssText = 'position:fixed;top:0;left:0;height:'+figallery.config.viewportHeight+'px;width:100%;z-index:100;';
+			this.inner.style.cssText = '-'+figallery.config.pref+'-transform:translateY('+perc+'px);position:relative;height:'+figallery.config.viewportHeight+'px';
 			
 			// create as many box instances as boxCount
-			for(var i=0; i<boxCount; i++) {
+			for(var i=0; i<this.boxCount; i++) {
 				var box = new Box(),
 					el = box.getElement();
 
@@ -52,105 +57,100 @@
 				box.setColor( 'rgba('+r+','+g+','+b+', '+(0.3 + Math.random()*1)+')' );
 
 				// set size of box
-				box.setSize( size, size );
+				box.setSize( this.size, this.size );
 
 				// push box into pool
-				pool.push( box );
+				this.pool.push( box );
 
 				// append box element to inner dom
-				inner.appendChild(el);
+				this.inner.appendChild(el);
 			}
 			
 			// let's animate
-			animate();
-		}
+			cancelAnimationFrame( this.timer );
+			this.animate();
+		},
 
 		/**
 		 * requestanimationframe handler
 		 * calls rotate
 		 * get raf id so it can be canceled later
 		 */
-		function animate() {
-			timer  = requestAnimationFrame( animate );
-			rotate();
-		}
+		animate: function() {
+			console.log("animate");
+			var self = this;
+			self.timer  = requestAnimationFrame( function() {
+				self.animate();
+			} );
+			self.rotate();
+		},
 
 		/**
 		 * rotate the boxes in a sphere
 		 */
-		function rotate() {
-			for (var i = 0; i < boxCount; i++) {
-				x = radius * Math.cos( angle ) + point;
-				y = radius * Math.sin( angle ) + point;
+		rotate: function() {
+			for (var i = 0; i < this.boxCount; i++) {
+				this.x = this.radius * Math.cos( this.angle ) + this.point;
+				this.y = this.radius * Math.sin( this.angle ) + this.point;
 				
 				// set rotation
-				pool[i].rotate( -Math.atan2( y - point, x - point ) * 180 / Math.PI + 90 + 'deg');
+				this.pool[i].rotate( -Math.atan2( this.y - this.point, this.x - this.point ) * 180 / Math.PI + 90 + 'deg');
 
 				// set position
-				pool[i].position( x, y );
+				this.pool[i].position( this.x, this.y );
 
-				angle += step;
+				this.angle += this.step;
 
 				// if it's time to exit, call setOut method of each box
-				if(animateOut) pool[i].setOut();
+				if(this.animateOut) this.pool[i].setOut();
 			}
 
 			// make sure we only act once on animateOut
-			if(animateOut) animateOut = false;
+			if(this.animateOut) this.animateOut = false;
 
 			// increment radius and angle of the boxes
-			angle += Math.sin(Math.cos(0.03))*0.03;
-			radius += Math.sin(Math.cos(angle)*2);
-		}
+			this.angle += Math.sin(Math.cos(0.03))*0.03;
+			this.radius += Math.sin(Math.cos(this.angle)*2);
+		},
 
 		/**
 		 * returns loaderanim stage
 		 */
-		function getElement() {
-			return stage;
-		}
+		getElement: function() {
+			return this.stage;
+		},
 
 		/**
 		 * destroy, clean up
 		 */
-		function destroy() {
-			animateOut = true;
-			setTimeout(function() {
-				cancelAnimationFrame( timer );
-				timer = null;
+		destroy: function() {
+			var self = this;
+			self.animateOut = true;
+			setTimeout( function() {
+				cancelAnimationFrame( self.timer );
+				self.timer = null;
 
-				clearPool();
-				stage.removeChild(inner);
-				stage.parentNode.removeChild(stage);
-				pool = [];
+				self.clearPool();
+				self.stage.removeChild(self.inner);
+				self.stage.parentNode.removeChild(self.stage);
+				self.pool = [];
 			}, 1000);
-		}
+		},
 
 		/**
 		 * clean up the pool
 		 */
-		function clearPool() {
-			var i = 0, len = pool.length, boxel;
+		clearPool: function() {
+			var i = 0, len = this.pool.length, boxel;
 			for(i; i<len; i++) {
-				boxel = pool[i].getElement();
-				inner.removeChild(boxel);
+				boxel = this.pool[i].getElement();
+				this.inner.removeChild(boxel);
 				boxel = null;	
-				pool[i] = null;
+				this.pool[i] = null;
 			}
 		}
-
-		// init loaderanim
-		init();
-
-		/**
-		 * api
-		 */
-		return {
-			getElement : getElement,
-			init : init,
-			destroy : destroy
-		}
 	};
+	
 
 	/**
 	 * box object

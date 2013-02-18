@@ -57,8 +57,7 @@
 			galleryItems = [],
 			itemWidth = 0,
 			resizeTimeout = 0,
-			toppanel,
-			loaderAnim;
+			toppanel;
 
 		/**
 		 * Methods Object :: private
@@ -315,8 +314,8 @@
 				galleryItems = methods.getElements();
 				var imagePaths = methods.getElementImageSource();
 
-				// display loaderanim
-				loaderAnim = new figallery.LoaderAnim(4,35);
+				// display loaderanim 
+				var loaderAnim = new figallery.LoaderAnim(4,35);
 				el.appendChild(loaderAnim.getElement());
 				
 				// preload all images, once loaded lay it all out and show our items
@@ -340,6 +339,7 @@
 					
 					// destroy loaderanim
 					loaderAnim.destroy();
+					loaderAnim = null;
 				});
 			},
 
