@@ -1,6 +1,14 @@
 FIGallery
 =========
 
+Examples:
+
+[Paged](http://laveklint.com/fi-gallery-1)
+
+[Paged, max of 3 per row](http://laveklint.com/fi-gallery-2)
+
+[Pure display](http://laveklint.com/fi-gallery-3)
+
 Image Gallery : vanilla js image gallery which takes advantage of css3 transitions and transforms
 for all animation.
 
